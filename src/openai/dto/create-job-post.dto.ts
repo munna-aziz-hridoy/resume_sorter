@@ -11,10 +11,6 @@ export class CreateJobPostDto {
 
   @IsString()
   @IsNotEmpty()
-  job_description: string;
-
-  @IsString()
-  @IsNotEmpty()
   education: string;
 
   @IsString()
@@ -27,19 +23,19 @@ export class CreateJobPostDto {
 
   @IsArray()
   @IsNotEmpty()
-  qualifications?: string[];
+  qualifications?: string;
 
   @IsArray()
   @IsNotEmpty()
-  additional_requirements?: string[];
+  additional_requirements?: string;
 
   @IsArray()
   @IsNotEmpty()
-  responsibilities?: string[];
+  responsibilities?: string;
 
   @IsArray()
   @IsNotEmpty()
-  benefits: string[];
+  benefits: string;
 
   @IsString()
   note: string;
