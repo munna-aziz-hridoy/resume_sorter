@@ -17,7 +17,7 @@ datasource db {
 }
 
 model Job_Post {
-  id                      Int            @id @default(autoincrement())
+  id                      String         @id @default(uuid())
   role                    String
   company_name            String
   job_description         String
@@ -26,18 +26,19 @@ model Job_Post {
   type                    String
   qualifications          String[]
   additional_requirements String[]
-  benefits                String[]
   responsibilities        String[]
-  status                  String?
-  note                    String?
+  benefits                String[]
+  status                  String
+  note                    String
   user_id                 String
-  candidates              Candidates[]
-  short_listed            Short_Listed[]
+  createdAt               DateTime       @default(now())
+  updatedAt               DateTime       @updatedAt
+  Candidates              Candidates[]
+  Short_Listed            Short_Listed[]
 }
 
 model Candidates {
   id           Int            @id @default(autoincrement())
-  job_post     Job_Post       @relation(fields: [job_post_id], references: [id])
   job_post_id  Int
   name         String
   phone        String
@@ -46,12 +47,15 @@ model Candidates {
   rank         Float
   resume       String
   short_listed Short_Listed[]
+  Job_Post     Job_Post?      @relation(fields: [job_PostId], references: [id])
+  job_PostId   String?
 }
 
 model Short_Listed {
   id           Int        @id @default(autoincrement())
-  job_post     Job_Post   @relation(fields: [job_post_id], references: [id])
   job_post_id  Int
   candidate    Candidates @relation(fields: [candidate_id], references: [id])
   candidate_id Int
+  job_PostId   String?
+  Job_Post     Job_Post?  @relation(fields: [job_PostId], references: [id])
 }
