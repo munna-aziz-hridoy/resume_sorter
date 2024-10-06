@@ -24,7 +24,7 @@ model Job_Post {
   education               String
   salary                  String
   type                    String
-  qualificatons           String[]
+  qualifications          String[]
   additional_requirements String[]
   benefits                String[]
   responsibilities        String[]
