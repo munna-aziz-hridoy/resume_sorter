@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsString, IsNotEmpty, IsArray } from 'class-validator';
 
 export class CreateJobPostDto {
   @IsString()
@@ -11,19 +11,7 @@ export class CreateJobPostDto {
 
   @IsString()
   @IsNotEmpty()
-  responsibilities: string;
-
-  @IsString()
-  @IsNotEmpty()
-  qualifications: string;
-
-  @IsString()
-  @IsNotEmpty()
-  additional_requirements: string;
-
-  @IsString()
-  @IsNotEmpty()
-  benefits: string;
+  job_description: string;
 
   @IsString()
   @IsNotEmpty()
@@ -36,4 +24,31 @@ export class CreateJobPostDto {
   @IsString()
   @IsNotEmpty()
   type: string;
+
+  @IsArray()
+  @IsNotEmpty()
+  qualifications?: string[];
+
+  @IsArray()
+  @IsNotEmpty()
+  additional_requirements?: string[];
+
+  @IsArray()
+  @IsNotEmpty()
+  responsibilities?: string[];
+
+  @IsArray()
+  @IsNotEmpty()
+  benefits: string[];
+
+  @IsString()
+  @IsNotEmpty()
+  status: string;
+
+  @IsString()
+  note: string;
+
+  @IsString()
+  @IsNotEmpty()
+  user_id: string;
 }

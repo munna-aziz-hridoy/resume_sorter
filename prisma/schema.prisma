@@ -17,12 +17,40 @@ datasource db {
 }
 
 model Job_Post {
-  id              Int    @id @default(autoincrement())
+  id              Int            @id @default(autoincrement())
   role            String
   company_name    String
   job_description String
   education       String
   salary          String
   type            String
+  qualificatons   String[]
+  requirements    String[]
+  benefits        String[]
+  status          String
+  note            String
   user_id         String
+  candidates      Candidates[]
+  short_listed    Short_Listed[]
+}
+
+model Candidates {
+  id           Int            @id @default(autoincrement())
+  job_post     Job_Post       @relation(fields: [job_post_id], references: [id])
+  job_post_id  Int
+  name         String
+  phone        String
+  email        String
+  status       String
+  rank         Float
+  resume       String
+  short_listed Short_Listed[]
+}
+
+model Short_Listed {
+  id           Int        @id @default(autoincrement())
+  job_post     Job_Post   @relation(fields: [job_post_id], references: [id])
+  job_post_id  Int
+  candidate    Candidates @relation(fields: [candidate_id], references: [id])
+  candidate_id Int
 }

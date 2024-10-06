@@ -66,6 +66,8 @@ export class OpenaiService {
       salary,
       type,
       benefits,
+      note,
+      education,
     } = jobPostDto;
 
     try {
@@ -80,19 +82,19 @@ export class OpenaiService {
           {
             role: 'user',
             content: `Create a job description using the details below:
-          Role: ${role}
-          Company Name: ${company_name}
-          Responsibilities: ${responsibilities}
-          Qualifications: ${qualifications}
-          Additional Requirements: ${additional_requirements}
-          Benefits: ${benefits}
-          Salary: ${salary}
-          Type: ${type}`,
+            Role: ${role}
+            Company Name: ${company_name}
+            Responsibilities: ${responsibilities}
+            Qualifications: ${qualifications}
+            Additional Requirements: ${additional_requirements}
+            Benefits: ${benefits}
+            Salary: ${salary}
+            Type: ${type}
+            Education; ${education}`,
           },
           {
             role: 'user',
-            content:
-              'Generate a professional and detailed job description that includes the company introduction, job responsibilities, required qualifications, additional requirements, and benefits if applicable. Also return as marked language. Just return the marked format of the job post, nothing else. I want to get the marked only to use it. Also return the point as numbering',
+            content: `${note}. Generate a professional and detailed job description that includes the company introduction, job responsibilities, required qualifications, additional requirements, and benefits if applicable. Also return as marked language. Just return the marked format of the job post, nothing else. I want to get the marked only to use it. Also return all the list with point`,
           },
         ],
         temperature: 0.7,

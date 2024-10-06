@@ -12,7 +12,41 @@ export class JobPostsService {
     private prismaService: PrismaService,
   ) {}
 
-  async getJobPosts(
+  async getAllJobPost(queryParams: {
+    status?: string;
+    type?: string;
+    company_name?: string;
+  }) {
+    try {
+      const { status, type, company_name } = queryParams;
+
+      // Build the where clause dynamically based on the query params
+      const whereClause: any = {};
+
+      if (status) whereClause.status = status;
+      if (type) whereClause.type = type;
+      if (company_name) whereClause.company_name = company_name;
+
+      // Use the where clause in the Prisma query
+      const result = await this.prismaService.job_Post.findMany({
+        where: whereClause,
+      });
+
+      return {
+        success: true,
+        message: 'Job post details retrieved successfully',
+        data: result,
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error.message,
+        data: null,
+      };
+    }
+  }
+
+  async getJobPostsDesc(
     jobPostDto: CreateJobPostDto,
   ): Promise<Job_Description_Response> {
     // Pass the DTO object to the getJobDescription method

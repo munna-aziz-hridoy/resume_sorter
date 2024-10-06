@@ -6,6 +6,8 @@ import {
   Body,
   UsePipes,
   ValidationPipe,
+  Get,
+  Query,
 } from '@nestjs/common';
 import { JobPostsService } from './job-posts.service';
 import { CreateJobPostDto } from './dto/create-job-post.dto';
@@ -15,6 +17,20 @@ import { SaveJobDto } from './dto/save-job.dto';
 export class JobPostsController {
   constructor(private readonly jobPostService: JobPostsService) {}
 
+  @Get('all')
+  getAllJobPosts(
+    @Query('status') status?: string,
+    @Query('type') type?: string,
+    @Query('company_name') company_name?: string,
+  ) {
+    const queryParams = {
+      status,
+      type,
+      company_name,
+    };
+    return this.jobPostService.getAllJobPost(queryParams);
+  }
+
   @Post('create')
   @UsePipes(
     new ValidationPipe({
@@ -23,7 +39,7 @@ export class JobPostsController {
     }),
   )
   createJobPost(@Body() createJobPostDto: CreateJobPostDto) {
-    return this.jobPostService.getJobPosts(createJobPostDto);
+    return this.jobPostService.getJobPostsDesc(createJobPostDto);
   }
 
   @Post('save')

@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsString, IsNotEmpty, IsArray } from 'class-validator';
 
 export class SaveJobDto {
   @IsString()
@@ -24,6 +24,29 @@ export class SaveJobDto {
   @IsString()
   @IsNotEmpty()
   type: string;
+
+  @IsArray()
+  @IsNotEmpty()
+  qualifications?: string[];
+
+  @IsArray()
+  @IsNotEmpty()
+  additional_requirements?: string[];
+
+  @IsArray()
+  @IsNotEmpty()
+  responsibilities?: string[];
+
+  @IsArray()
+  @IsNotEmpty()
+  benefits: string[];
+
+  @IsString()
+  @IsNotEmpty()
+  status: string;
+
+  @IsString()
+  note: string;
 
   @IsString()
   @IsNotEmpty()
