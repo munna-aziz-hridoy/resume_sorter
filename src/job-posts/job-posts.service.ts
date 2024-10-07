@@ -63,9 +63,14 @@ export class JobPostsService {
 
   async saveJob(saveJob: SaveJobDto): Promise<Job_Save_Response> {
     try {
-      const result = await this.prismaService.job_Post.create({
-        data: saveJob,
-      });
+      const result = await this.prismaService.job_Post
+        .create({
+          data: saveJob,
+        })
+        .catch((error) => {
+          console.log(error);
+          throw new Error(error.message);
+        });
 
       return {
         success: true,
