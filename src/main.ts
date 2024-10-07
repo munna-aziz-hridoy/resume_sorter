@@ -11,11 +11,14 @@ async function bootstrap() {
     origin: '*',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   });
-  await app.listen(5000);
 
-  const prisma = new PrismaClient();
+  const prisma = new PrismaClient({
+    log: ['query', 'info', 'warn', 'error'], // Log all queries, info, warnings, and errors
+  });
   await prisma
     .$connect()
     .catch((err) => console.error('Prisma connection error:', err));
+
+  await app.listen(5000);
 }
 bootstrap();
