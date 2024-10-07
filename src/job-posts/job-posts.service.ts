@@ -73,6 +73,8 @@ export class JobPostsService {
         data: result,
       };
     } catch (error) {
+      console.log(error);
+
       return {
         success: false,
         message: error.message,
