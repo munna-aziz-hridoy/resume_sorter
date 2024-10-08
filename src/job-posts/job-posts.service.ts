@@ -42,6 +42,24 @@ export class JobPostsService {
     }
   }
 
+  async getOneJobPost(id: string) {
+    try {
+      const result = await this.prismaService.job_Post.findUnique({
+        where: {
+          id: id,
+        },
+      });
+
+      return {
+        success: true,
+        message: 'Job post details retrieved successfully',
+        data: result,
+      };
+    } catch (error) {
+      throw new Error('Failed to retrieved saved job');
+    }
+  }
+
   async getJobPostsDesc(
     jobPostDto: CreateJobPostDto,
   ): Promise<Job_Description_Response> {

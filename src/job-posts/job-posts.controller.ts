@@ -8,6 +8,7 @@ import {
   ValidationPipe,
   Get,
   Query,
+  Param,
 } from '@nestjs/common';
 import { JobPostsService } from './job-posts.service';
 import { CreateJobPostDto } from './dto/create-job-post.dto';
@@ -29,6 +30,11 @@ export class JobPostsController {
       company_name,
     };
     return this.jobPostService.getAllJobPost(queryParams);
+  }
+
+  @Get('details/:id')
+  getJobPostDetails(@Param('id') id: string) {
+    return this.jobPostService.getOneJobPost(id);
   }
 
   @Post('create')
