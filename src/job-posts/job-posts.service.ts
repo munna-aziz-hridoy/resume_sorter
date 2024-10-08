@@ -59,18 +59,19 @@ export class JobPostsService {
       const result = await this.prismaService.job_Post
         .create({
           data: {
-            additional_requirements: saveJob.additional_requirements,
+            additional_requirements:
+              saveJob.additional_requirements?.join(', '),
             company_name: saveJob.company_name,
             job_description: saveJob.job_description,
             status: saveJob.status,
             type: saveJob.type,
             user_id: saveJob.user_id,
             role: saveJob.role,
-            responsibilities: saveJob.responsibilities,
+            responsibilities: saveJob.responsibilities?.join(', '),
             note: saveJob.note,
-            benefits: saveJob.benefits,
+            benefits: saveJob.benefits?.join(', '),
             salary: saveJob.salary,
-            qualifications: saveJob.qualifications,
+            qualifications: saveJob.qualifications?.join(', '),
             education: saveJob.education,
           },
         })
