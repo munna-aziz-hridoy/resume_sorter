@@ -80,9 +80,7 @@ export class ResumeUploadService {
 
           // Return error if file type is unsupported
         } catch (error) {
-          return {
-            error: `Error processing file ${file.originalname}: ${error.message}`,
-          };
+          throw new Error('Failed to proccess files');
         }
       }),
     );

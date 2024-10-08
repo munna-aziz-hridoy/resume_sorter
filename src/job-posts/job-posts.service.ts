@@ -38,11 +38,7 @@ export class JobPostsService {
         data: result,
       };
     } catch (error) {
-      return {
-        success: false,
-        message: error.message,
-        data: null,
-      };
+      throw new Error('Failed to retrieved saved job');
     }
   }
 
@@ -54,10 +50,7 @@ export class JobPostsService {
       const result = await this.openAiService.getJobDescription(jobPostDto);
       return result;
     } catch (error) {
-      return {
-        success: false,
-        job_description: error.message,
-      };
+      throw new Error('Failed to get job description');
     }
   }
 
@@ -93,7 +86,7 @@ export class JobPostsService {
       };
     } catch (error) {
       console.log(error);
-      throw new Error(error.message);
+      throw new Error('Failed to save job');
     }
   }
 }

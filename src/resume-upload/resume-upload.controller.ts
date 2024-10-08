@@ -42,8 +42,7 @@ export class ResumeUploadController {
       return result;
     } catch (error) {
       console.log(error);
-
-      return { message: error.message };
+      throw new Error('Failed to proccess file');
     }
   }
 
@@ -80,8 +79,7 @@ export class ResumeUploadController {
       return result;
     } catch (error) {
       console.log(error);
-
-      return { message: error.message };
+      throw new Error('Failed to proccess files');
     }
   }
 }
