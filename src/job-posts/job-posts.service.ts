@@ -65,7 +65,21 @@ export class JobPostsService {
     try {
       const result = await this.prismaService.job_Post
         .create({
-          data: saveJob,
+          data: {
+            additional_requirements: saveJob.additional_requirements,
+            company_name: saveJob.company_name,
+            job_description: saveJob.job_description,
+            status: saveJob.status,
+            type: saveJob.type,
+            user_id: saveJob.user_id,
+            role: saveJob.role,
+            responsibilities: saveJob.responsibilities,
+            note: saveJob.note,
+            benefits: saveJob.benefits,
+            salary: saveJob.salary,
+            qualifications: saveJob.qualifications,
+            education: saveJob.education,
+          },
         })
         .catch((error) => {
           console.log(error);
@@ -79,12 +93,7 @@ export class JobPostsService {
       };
     } catch (error) {
       console.log(error);
-
-      return {
-        success: false,
-        message: error.message,
-        data: null,
-      };
+      throw new Error(error.message);
     }
   }
 }
