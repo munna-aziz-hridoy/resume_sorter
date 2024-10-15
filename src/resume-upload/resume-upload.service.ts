@@ -65,7 +65,6 @@ export class ResumeUploadService {
     const startIndex = openAiResult.indexOf('[');
     const endIndex = openAiResult.lastIndexOf(']') + 1;
     const jsonString = openAiResult.slice(startIndex, endIndex);
-    console.log(jsonString);
     const cadidateData = JSON.parse(jsonString);
     await this.prismaService.candidates.create({
       data: {
