@@ -15,40 +15,17 @@ export class SaveJobDto {
 
   @IsString()
   @IsNotEmpty()
-  education: string;
-
-  @IsString()
-  @IsNotEmpty()
   salary: string;
 
   @IsString()
   @IsNotEmpty()
   type: string;
 
-  @IsArray()
-  @IsNotEmpty()
-  qualifications?: string[];
-
-  @IsArray()
-  @IsNotEmpty()
-  additional_requirements?: string[];
-
-  @IsArray()
-  @IsNotEmpty()
-  responsibilities?: string[];
-
-  @IsArray()
-  @IsNotEmpty()
-  benefits: string[];
-
   @IsString()
   @IsNotEmpty()
   status: string;
 
   @IsString()
-  note: string;
-
-  @IsString()
   @IsNotEmpty()
-  user_id: string;
+  note: string;
 }

@@ -1,28 +1,35 @@
 import { Injectable } from '@nestjs/common';
-import * as path from 'path';
+import path from 'path';
 import pdf from 'pdf-parse';
-import * as fs from 'fs';
-import * as mammoth from 'mammoth';
-import { OpenaiService } from 'src/openai/openai.service';
+import mammoth from 'mammoth';
+
+import { OpenaiService } from '../openai/openai.service';
+import { FirebaseService } from 'src/firebase/firebase.service';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class ResumeUploadService {
-  constructor(private readonly openaiService: OpenaiService) {}
+  constructor(
+    private readonly firebaseService: FirebaseService,
+    private readonly openaiService: OpenaiService,
+    private readonly prismaService: PrismaService,
+  ) {}
 
-  async processFile(file: Express.Multer.File): Promise<any> {
+  async processFile(file: Express.Multer.File, id: string): Promise<any> {
     const fileType = path.extname(file.originalname).toLowerCase();
 
-    if (fileType !== '.pdf' && fileType !== '.docx')
+    if (fileType !== '.pdf' && fileType !== '.docx') {
       throw new Error('Unsupported file type');
+    }
 
-    let resume_content;
+    let resumeContent;
 
     // Handle PDF files
     if (fileType === '.pdf') {
-      const pdfData = await pdf(fs.readFileSync(file.path));
+      const pdfData = await pdf(file.buffer);
       const formattedText = this.formatPdfText(pdfData.text);
 
-      resume_content = {
+      resumeContent = {
         text: formattedText,
         name: file.originalname,
         type: 'pdf',
@@ -31,56 +38,98 @@ export class ResumeUploadService {
 
     // Handle DOCX files
     if (fileType === '.docx') {
-      // Ensure that the file path used is the actual file, not a directory
-      const { value: text } = await mammoth.extractRawText({ path: file.path });
+      const { value: text } = await mammoth.extractRawText({
+        buffer: file.buffer,
+      });
 
-      resume_content = {
+      resumeContent = {
         text,
         name: file.originalname,
         type: 'docx',
       };
     }
+
+    // Upload the file to Firebase Storage
+    const fileUrl = await this.firebaseService.uploadFile(file);
+    const job = await this.prismaService.job_Post.findUnique({
+      where: {
+        id: parseInt(id),
+      },
+    });
+    const openAiResult = await this.openaiService.getResumeRanking(
+      resumeContent.text,
+      job.job_description,
+      fileUrl,
+    );
+
+    const startIndex = openAiResult.indexOf('[');
+    const endIndex = openAiResult.lastIndexOf(']') + 1;
+    const jsonString = openAiResult.slice(startIndex, endIndex);
+    console.log(jsonString);
+    const cadidateData = JSON.parse(jsonString);
+    await this.prismaService.candidates.create({
+      data: {
+        name: cadidateData[0].name,
+        phone: cadidateData[0].phone,
+        email: cadidateData[0].email,
+        rank: cadidateData[0].rank,
+        resume_url: fileUrl,
+        education: cadidateData[0].education,
+        university: cadidateData[0].university,
+        job_experience: cadidateData[0].job_experience,
+        previous_company: cadidateData[0].previous_company,
+        job_post_id: parseInt(id),
+      },
+    });
+
+    return {
+      message: 'Your Application submitted.',
+    };
   }
 
   async processMultipleFiles(
     files: Array<Express.Multer.File>,
-    job_description: string,
+    jobDescription: string,
   ): Promise<any> {
     const fileProcessingResults = await Promise.all(
       files.map(async (file) => {
-        const filePath = path.join(__dirname, '../../', file.path);
         const fileType = path.extname(file.originalname).toLowerCase();
 
         try {
           // Handle PDF files
           if (fileType === '.pdf') {
-            const pdfData = await pdf(fs.readFileSync(filePath));
+            const pdfData = await pdf(file.buffer);
             const formattedText = this.formatPdfText(pdfData.text);
+
+            const fileUrl = await this.firebaseService.uploadFile(file);
 
             return {
               text: formattedText,
               name: file.originalname,
               type: 'pdf',
+              url: fileUrl,
             };
           }
 
           // Handle Word (.docx) files
           if (fileType === '.docx') {
-            // Ensure that the file path used is the actual file, not a directory
             const { value: text } = await mammoth.extractRawText({
-              path: file.path,
+              buffer: file.buffer,
             });
+
+            const fileUrl = await this.firebaseService.uploadFile(file);
 
             return {
               text,
               name: file.originalname,
               type: 'docx',
+              url: fileUrl,
             };
           }
 
           // Return error if file type is unsupported
         } catch (error) {
-          throw new Error('Failed to proccess files');
+          throw new Error('Failed to process files');
         }
       }),
     );
@@ -91,9 +140,16 @@ export class ResumeUploadService {
       })
       .join(`\n-------------------------\n`);
 
-    const result = await this.openaiService.getResumeRanking(
+    const resumes_url = fileProcessingResults
+      .map((result) => {
+        return result.url;
+      })
+      .join(`\n-------------------------\n`);
+
+    const result = await this.openaiService.getResumesRanking(
       resumes,
-      job_description,
+      jobDescription,
+      resumes_url,
     );
 
     const startIndex = result.indexOf('[');
@@ -113,19 +169,13 @@ export class ResumeUploadService {
    * headers, or any other custom formatting.
    */
   private formatPdfText(rawText: string): string {
-    // Replace multiple whitespace characters with a single space
     const cleanedText = rawText.replace(/\s+/g, ' ').trim();
-
-    // Split the text into sentences based on common sentence delimiters
     const sentences = cleanedText.split(/(?<=[.!?])\s+/);
 
-    // Format sentences
     const formattedSentences = sentences.map((sentence) => {
-      // Capitalize the first letter of each sentence
       return sentence.charAt(0).toUpperCase() + sentence.slice(1);
     });
 
-    // Join the formatted sentences back into a single string
     return formattedSentences.join('\n\n');
   }
 }

@@ -14,8 +14,56 @@ export class OpenaiService {
   }
 
   async getResumeRanking(
+    resume: string,
+    job_description: string,
+    resume_url: string,
+  ): Promise<string> {
+    try {
+      const completion = await this.openai.chat.completions.create({
+        model: 'gpt-4', // Use the standard GPT-4 model
+        messages: [
+          {
+            role: 'system',
+            content:
+              'You are an AI assistant specialized in analyzing resumes and ranking them based on job description requirements.',
+          },
+          {
+            role: 'user',
+            content: `Job Description: ${job_description}.`,
+          },
+          {
+            role: 'user',
+            content: `Resumes: ${resume}.`,
+          },
+          {
+            role: 'user',
+            content: `Resume URLs: ${resume_url}.`,
+          },
+          {
+            role: 'user',
+            content: `Analyze the resume and rank him/her based on him/her relevance to the job description on a scale of 0-10. Also return result as JSON Array format only, nothing else. property will be 
+            [{name: name, email: email, phone:phone, rank: rank, education: education, university: university, job_experience: <number of year> years, previous_company: previous_company, resume_url: resume_url},...], if do not find any of the property from resume, put "N/A"`,
+          },
+        ],
+        temperature: 0.2,
+        max_tokens: 3500,
+        top_p: 1,
+        frequency_penalty: 0.5,
+        presence_penalty: 0.5,
+      });
+
+      const responseMessage = completion.choices[0].message.content;
+      return responseMessage || 'No response received';
+    } catch (error) {
+      console.log(error);
+      throw new Error('Error generating response');
+    }
+  }
+
+  async getResumesRanking(
     resumes: string,
     job_description: string,
+    resume_urls: string,
   ): Promise<string> {
     try {
       const completion = await this.openai.chat.completions.create({
@@ -36,8 +84,19 @@ export class OpenaiService {
           },
           {
             role: 'user',
-            content:
-              'Analyze each resume and rank them based on their relevance to the job description on a scale of 0-10. Also return result as JSON Array format only, nothing else. property will be [{name: name, email: email, phone:phone, rank: rank},...]',
+            content: `Resume URLs: ${resume_urls}.`,
+          },
+          {
+            role: 'user',
+            content: `Analyze each resume and rank them based on their relevance to the job description on a scale of 0-10. Also return result as JSON Array format only, nothing else. property will be 
+            [{name: name, email: email, phone:phone, rank: rank, education: education, university: university, job_experience: {
+             role: "Full Stack Developer",
+             company: "Tech Solutions Ltd.",
+             duration: {
+               start_date: "August 2020",
+               end_date: "Present"
+             }
+           }, previous_company: previous_company, resume_url: resume_url},...], if do not find any of the property from resume, put "N/A"`,
           },
         ],
         temperature: 0.2,
@@ -46,6 +105,7 @@ export class OpenaiService {
         frequency_penalty: 0.5,
         presence_penalty: 0.5,
       });
+
       const responseMessage = completion.choices[0].message.content;
       return responseMessage || 'No response received';
     } catch (error) {

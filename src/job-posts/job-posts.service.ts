@@ -46,7 +46,7 @@ export class JobPostsService {
     try {
       const result = await this.prismaService.job_Post.findUnique({
         where: {
-          id: id,
+          id: parseInt(id),
         },
       });
 
@@ -76,22 +76,7 @@ export class JobPostsService {
     try {
       const result = await this.prismaService.job_Post
         .create({
-          data: {
-            additional_requirements:
-              saveJob.additional_requirements?.join(', '),
-            company_name: saveJob.company_name,
-            job_description: saveJob.job_description,
-            status: saveJob.status,
-            type: saveJob.type,
-            user_id: saveJob.user_id,
-            role: saveJob.role,
-            responsibilities: saveJob.responsibilities?.join(', '),
-            note: saveJob.note,
-            benefits: saveJob.benefits?.join(', '),
-            salary: saveJob.salary,
-            qualifications: saveJob.qualifications?.join(', '),
-            education: saveJob.education,
-          },
+          data: saveJob,
         })
         .catch((error) => {
           console.log(error);
