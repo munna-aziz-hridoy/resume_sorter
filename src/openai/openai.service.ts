@@ -41,8 +41,7 @@ export class OpenaiService {
           },
           {
             role: 'user',
-            content: `Analyze the resume and rank him/her based on him/her relevance to the job description on a scale of 0-10. Also return result as JSON Array format only, nothing else. property will be 
-            [{name: name, email: email, phone:phone, rank: rank, education: education, university: university, job_experience: <number of year> years, previous_company: previous_company, resume_url: resume_url},...], if do not find any of the property from resume, put "N/A"`,
+            content: `Analyze the resume and rank him/her based on him/her relevance to the job description on a scale of 0-10. Also return result as JSON Array format only, nothing else. property will be\n'[{name: string, email: string, phone:string, rank: number education: string, university: string, job_experience: string, previous_company: string[], resume_url: resume_url}]',\nif do not find any of the property from resume, put "N/A".\nSometime you put an array on job_experience, do not do that. Strict to the type I've decleared on the format`,
           },
         ],
         temperature: 0.2,
@@ -88,15 +87,7 @@ export class OpenaiService {
           },
           {
             role: 'user',
-            content: `Analyze each resume and rank them based on their relevance to the job description on a scale of 0-10. Also return result as JSON Array format only, nothing else. property will be 
-            [{name: name, email: email, phone:phone, rank: rank, education: education, university: university, job_experience: {
-             role: "Full Stack Developer",
-             company: "Tech Solutions Ltd.",
-             duration: {
-               start_date: "August 2020",
-               end_date: "Present"
-             }
-           }, previous_company: previous_company, resume_url: resume_url},...], if do not find any of the property from resume, put "N/A"`,
+            content: `Analyze each resume and rank them based on their relevance to the job description on a scale of 0-10. Also return result as JSON Array format only, nothing else. property will be\n'[{name: string, email: string, phone:string, rank: number education: string, university: string, job_experience: string, previous_company: string[], resume_url: resume_url},...]',\nif do not find any of the property from resume, put "N/A".\nSometime you put an array on job_experience, do not do that. Strict to the type I've decleared on the format`,
           },
         ],
         temperature: 0.2,

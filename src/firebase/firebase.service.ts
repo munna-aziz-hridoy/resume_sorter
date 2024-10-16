@@ -26,7 +26,7 @@ export class FirebaseService {
   async uploadFile(file: Express.Multer.File): Promise<string> {
     try {
       const bucket = admin.storage().bucket();
-      const filePath = `uploads/${file.originalname}`;
+      const filePath = `uploads/${file.originalname}${Date.now()}`;
 
       // Upload the file to the bucket
       await bucket.file(filePath).save(file.buffer, {
