@@ -14,13 +14,15 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   });
 
+  await app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+  });
+
   const prisma = new PrismaClient({
     log: ['query', 'info', 'warn', 'error'], // Log all queries, info, warnings, and errors
   });
   await prisma
     .$connect()
     .catch((err) => console.error('Prisma connection error:', err));
-
-  await app.listen(PORT);
 }
 bootstrap();
