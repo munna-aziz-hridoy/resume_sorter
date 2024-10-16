@@ -28,4 +28,8 @@ export class SaveJobDto {
   @IsString()
   @IsNotEmpty()
   note: string;
+
+  @IsString()
+  @IsNotEmpty()
+  nature: string;
 }
