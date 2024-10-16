@@ -66,6 +66,16 @@ export class ResumeUploadService {
     const endIndex = openAiResult.lastIndexOf(']') + 1;
     const jsonString = openAiResult.slice(startIndex, endIndex);
     const cadidateData = JSON.parse(jsonString);
+
+    const is_candidate_exists = await this.prismaService.candidates.findMany({
+      where: {
+        email: cadidateData[0].email,
+      },
+    });
+
+    if (is_candidate_exists.length > 0)
+      throw new Error('Candidate already exists');
+
     await this.prismaService.candidates.create({
       data: {
         name: cadidateData[0].name,

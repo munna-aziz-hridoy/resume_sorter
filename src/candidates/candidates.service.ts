@@ -12,7 +12,7 @@ export class CandidatesService {
           job_post_id: jobId,
         },
         orderBy: {
-          rank: 'asc', // Sort candidates by rank in ascending order
+          rank: 'desc', // Sort candidates by rank in ascending order
         },
       });
 
