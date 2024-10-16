@@ -11,6 +11,9 @@ export class CandidatesService {
         where: {
           job_post_id: jobId,
         },
+        orderBy: {
+          rank: 'asc', // Sort candidates by rank in ascending order
+        },
       });
 
       return result;
